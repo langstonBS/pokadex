@@ -1,11 +1,12 @@
 // import React from 'react';
 // import { render } from '@testing-library/react';
-import App from './App';
-import { shallow, mount, render } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import React from 'react';
+import { shallow } from 'enzyme';
+import RenderPokemon from './RenderPokemon';
 
-test('renders learn react link', () => {
-  const { getByText } = render(<App />);
-  const linkElement = getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+describe('RenderPokemon', () => {
+  it('Renders App', () => {
+    const wrapper = shallow(< RenderPokemon />);
+    expect(wrapper).toMachSnapshot();
+  });
 });

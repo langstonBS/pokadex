@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import request from 'superagent';
 import RenderPokemon from './RenderPokemon';
 import './App.css';
-import { configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+
 
 export default class App extends Component {
 
@@ -14,7 +13,19 @@ export default class App extends Component {
     attacDefenc: 'attack',
     ascDesc: 'asc',
     page: 1,
+    typePram: '',
+    dataType: [ ]
   }
+
+  async componentDidMount() {
+    const sortOrder = this.state.ascDesc; 
+    const  sortOder2 = this.state.attacDefenc;
+    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?&sort=${sortOder2}&direction=${sortOrder}&page=1`)    
+    this.setState({ data: fetchedData.body.results });
+    const fetchedDatabar = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex/types`);
+    this.setState({ dataType: fetchedDatabar.body });
+
+}
 
   handleChange = (e) => {
     const value = e.target.value;
@@ -40,7 +51,7 @@ export default class App extends Component {
   }
 
   handleClick = async () => {
-    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=24&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}`);
+    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=24&type_1=${this.state.typePram}&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${this.state.page}`);
     this.setState({ data: fetchedData.body.results });
   }
 
@@ -53,15 +64,19 @@ export default class App extends Component {
       Newpage = curentPage - 1;
     }
     this.setState({ page: Newpage });
-    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=24&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${this.state.page}`);
+    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=24&type_1=${this.state.typePram}&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${this.state.page}`);
     this.setState({ data: fetchedData.body.results });
   }
+  tyepofPokemon = (e) => {
+    const value = e.target.value;
+    this.setState({ typePram: value });
+  };
   
   pagePlaceNext = async () => {
     let curentPage = this.state.page;
     let Newpage = curentPage + 1;
     this.setState({ page: Newpage });
-    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=24&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${this.state.page}`);
+    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=24&type_1=${this.state.typePram}&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${this.state.page}`);
     this.setState({ data: fetchedData.body.results });
 
 }
@@ -77,8 +92,10 @@ export default class App extends Component {
               <input onChange={this.handleChange} />
           </span>
           <div>
-              <h3>Defence</h3>
-            <input type="number" pattern="[0-9]" onChange={this.levelChange} />
+              <h3>Select Type</h3>
+              <select className="Type" onChange={this.tyepofPokemon}>
+              {this.state.dataType.map(item => <option value= {item.type} > {item.type} </option>)}
+              </select>
             </div>
             <span className="sortby">
               <h3>Order by</h3>
