@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import request from 'superagent';
 import RenderPokemon from './RenderPokemon';
 import './App.css';
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 
 export default class App extends Component {
 
