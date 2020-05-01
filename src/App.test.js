@@ -3,32 +3,27 @@
 import React from 'react';
 import App from './App';
 import { shallow } from 'enzyme';
-import RenderPokemon from './RenderPokemon';
 import Adapter from 'enzyme-adapter-react-16';
 import SearchPage from './SearchPage'
 import DetailPage from  './PokemonDetail'
 
 describe('First React component test with Enzyme', () => {
    it('renders without crashing', () => {
-      shallow(<App />);
+     const wrapper = shallow(<App />);
+     expect(wrapper).toMatchSnapshot()
     });
 });
 
 describe('First React component test with Enzyme', () => {
   it('renders without crashing', () => {
-     shallow(<SearchPage />);
+    const wrapper = shallow(<SearchPage />);
+    expect(wrapper).toMatchSnapshot()
    });
 });
 
 
-describe('First React component test with Enzyme', () => {
   it('renders without crashing', () => {
-     shallow(<DetailPage />);
+    const wrapper = shallow(<DetailPage />);
+    expect(wrapper).toMatchSnapshot()
    });
-});
 
-// describe('First React component test with Enzyme', () => {
-//   it('renders without crashing', () => {
-//      shallow(<RenderPokemon />);
-//    });
-// });
