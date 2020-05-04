@@ -21,6 +21,7 @@ export default class SearchPage extends Component {
     const searchParams = new URLSearchParams(window.location.search);
     const pageQuery = searchParams.get('page');
     const pokemonQuery = searchParams.get('pokemon')
+    console.log(pokemonQuery);
     if (pokemonQuery){
       this.setState({ searchQuery: pokemonQuery })
     }
@@ -35,7 +36,7 @@ export default class SearchPage extends Component {
       const page = this.state.page;
       await this.serchMethod(page);
     }
-
+    await this.serchMethod();
     const fetchedDatabar = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex/types`);
     this.setState({ dataType: fetchedDatabar.body });
 }
@@ -94,7 +95,7 @@ export default class SearchPage extends Component {
 }
 
   async serchMethod(page) {
-    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?&sort=${this.state.attacDefenc}&direction=${this.state.attacDefenc}&page=${page}`);
+    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?&pokemon=${this.state.searchQuery}&sort=${this.state.attacDefenc}&direction=${this.state.attacDefenc}&page=${page}`);
     this.setState({ data: fetchedData.body.results });
   }
 
