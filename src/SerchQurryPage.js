@@ -18,7 +18,7 @@ export default class SerchPage extends Component {
                  <div className="searchList">
             <span className="nameSerch">
               <h3>name</h3>
-              <input onChange={this.props.handleChange} />
+              <input value={this.props.serch} onChange={this.props.handleChange} />
           </span>
           <div>
               <h3>Select Type</h3>

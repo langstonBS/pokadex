@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import request from 'superagent';
 import RenderPokemon from './RenderPokemon';
+import SearchBar from './SearchBar';
 
 export default class PokemonDetail extends Component {
     state = {
@@ -20,6 +21,7 @@ export default class PokemonDetail extends Component {
         return (
 
             <>
+                <SearchBar />
                 You have selected a Pokemon
                 {
                     this.state.name 

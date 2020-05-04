@@ -14,7 +14,8 @@ export default class SearchPage extends Component {
     ascDesc: 'asc',
     page: 1,
     typePram: '',
-    dataType: [ ]
+    dataType: [],
+    pageInfo: 0
   }
 
   async componentDidMount() {
@@ -30,6 +31,7 @@ export default class SearchPage extends Component {
       if (searchParams.get('page')) {
         startPage = searchParams.get('page');
       }
+      this.setState({ page:  pageQuery})
       await this.serchMethod(startPage)
     
     } else {
@@ -65,17 +67,16 @@ export default class SearchPage extends Component {
   }
 
   handleClick = async () => {
-    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=20&type_1=${this.state.typePram}&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${this.state.page}`);
-    this.setState({ data: fetchedData.body.results });
+    await this.serchMethod();
   }
 
   pagePlacePrevus = async () => {
     let curentPage = this.state.page;
     let Newpage
-    if (curentPage === 1) {
-      Newpage = curentPage;
+    if (Number(curentPage) === 1) {
+      Newpage = Number(curentPage);
     } else {
-      Newpage = curentPage - 1;
+      Newpage = Number(curentPage) - 1;
     }
     this.setState({ page: Newpage });
     await this.serchMethod(Newpage);
@@ -87,17 +88,36 @@ export default class SearchPage extends Component {
   };
   
   pagePlaceNext = async () => {
+    console.log("before page", this.state.pageInfo);
     let curentPage = this.state.page;
-    let Newpage = curentPage + 1;
+    console.log("cuernt page befor", curentPage);
+    let Newpage = 0;
+    let pokecount = this.state.pageInfo.count;
+    let perPageCount = this.state.pageInfo.perPage;
+    let pageLeft = pokecount - (curentPage * perPageCount);
+    console.log("cuernt page befor", curentPage);  
+    if (pageLeft >= 1) {
+      Newpage = Number(curentPage) + 1;
+    } else {
+      Newpage = Number(curentPage);
+    }
+    console.log("cuernt page after", curentPage);
+    console.log("newpage page after", Newpage);
     this.setState({ page: Newpage });
     await this.serchMethod(Newpage);
-
 }
 
   async serchMethod(page) {
-    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?&pokemon=${this.state.searchQuery}&sort=${this.state.attacDefenc}&direction=${this.state.attacDefenc}&page=${page}`);
+    if (!page) {
+      page = this.state.page; 
+    }
+    console.log('page', page);
+  let fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=20&type_1=${this.state.typePram}&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${page}`);
     this.setState({ data: fetchedData.body.results });
-  }
+    this.setState({ pageInfo: fetchedData.body });
+    console.log(this.state.pageInfo);
+    
+}
 
   render() {
     return (
