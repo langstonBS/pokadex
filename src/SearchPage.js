@@ -6,7 +6,6 @@ import './App.css';
 
 
 export default class SearchPage extends Component {
-
   state = {
     searchQuery: '',
     searchLevle: 0,
@@ -19,13 +18,26 @@ export default class SearchPage extends Component {
   }
 
   async componentDidMount() {
-    const sortOrder = this.state.ascDesc; 
-    const  sortOder2 = this.state.attacDefenc;
-    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?&sort=${sortOder2}&direction=${sortOrder}&page=1`)    
-    this.setState({ data: fetchedData.body.results });
+    const searchParams = new URLSearchParams(window.location.search);
+    const pageQuery = searchParams.get('page');
+    const pokemonQuery = searchParams.get('pokemon')
+    if (pokemonQuery){
+      this.setState({ searchQuery: pokemonQuery })
+    }
+    if (pageQuery) {
+      let startPage = 1;
+      if (searchParams.get('page')) {
+        startPage = searchParams.get('page');
+      }
+      await this.serchMethod(startPage)
+    
+    } else {
+      const page = this.state.page;
+      await this.serchMethod(page);
+    }
+
     const fetchedDatabar = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex/types`);
     this.setState({ dataType: fetchedDatabar.body });
-
 }
 
   handleChange = (e) => {
@@ -52,7 +64,7 @@ export default class SearchPage extends Component {
   }
 
   handleClick = async () => {
-    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=24&type_1=${this.state.typePram}&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${this.state.page}`);
+    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=20&type_1=${this.state.typePram}&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${this.state.page}`);
     this.setState({ data: fetchedData.body.results });
   }
 
@@ -65,8 +77,7 @@ export default class SearchPage extends Component {
       Newpage = curentPage - 1;
     }
     this.setState({ page: Newpage });
-    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=24&type_1=${this.state.typePram}&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${this.state.page}`);
-    this.setState({ data: fetchedData.body.results });
+    await this.serchMethod(Newpage);
   }
 
   tyepofPokemon = (e) => {
@@ -78,12 +89,14 @@ export default class SearchPage extends Component {
     let curentPage = this.state.page;
     let Newpage = curentPage + 1;
     this.setState({ page: Newpage });
-    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?pokemon=${this.state.searchQuery}&perPage=24&type_1=${this.state.typePram}&sort=${this.state.attacDefenc}&direction=${this.state.ascDesc}&page=${this.state.page}`);
-    this.setState({ data: fetchedData.body.results });
+    await this.serchMethod(Newpage);
 
 }
 
-
+  async serchMethod(page) {
+    const fetchedData = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?&sort=${this.state.attacDefenc}&direction=${this.state.attacDefenc}&page=${page}`);
+    this.setState({ data: fetchedData.body.results });
+  }
 
   render() {
     return (
